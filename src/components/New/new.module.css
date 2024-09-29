@@ -1,0 +1,20 @@
+.container {
+    display: flex;
+    align-items: flex-start;
+    border-bottom: 0.1rem solid rgb(107, 238, 220);
+}
+.photo {
+    padding: 1rem;
+}
+.details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+    padding: 1rem;
+}
+.date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
