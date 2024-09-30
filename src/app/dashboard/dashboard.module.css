@@ -1,0 +1,14 @@
+.dashboardContainer {
+    display: grid;
+    align-items: flex-start;
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.newsContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 0.1rem solid cyan;
+    padding: 1rem;
+}
