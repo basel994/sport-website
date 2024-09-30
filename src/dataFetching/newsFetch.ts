@@ -6,6 +6,7 @@ export const newsFetch = async () => {
         headers: {
             "Content-Type": "application/json",
         },
+        next: {revalidate: 60,}
     });
     const result: NewType[] = await response.json();
     return result;
