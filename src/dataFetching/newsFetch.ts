@@ -1,3 +1,7 @@
+import { NewType } from "@/types";
+
 export const newsFetch = async () => {
-    return "result";
+    const response = await fetch("/api/news");
+    const result: NewType[] = await response.json();
+    return result;
 }
