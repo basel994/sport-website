@@ -9,7 +9,7 @@ export default async function NewsSlot() {
         <div className={styles.newsContainer}>
             <h1>News count: {newsLength}</h1>
             <div>
-                <Link href="/dasboard/add_new">add new</Link>
+                <Link href="/dashboard/add_new">add new</Link>
             </div>
         </div>
     )
