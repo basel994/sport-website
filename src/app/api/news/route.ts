@@ -9,12 +9,14 @@ if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });  
 }  
 
-export async function GET(request: NextRequest) {  
+export async function GET(request: NextRequest) {
+    const contentType = request.headers;
+    contentType.get("Content-Type");
     try {  
         const result = await sql`SELECT * FROM news`;  
         return NextResponse.json(result.rows);  
     } catch (error) {  
-        return NextResponse.json({ error: "Failed to fetch news" }, { status: 500 });  
+        return NextResponse.json({ error: `Failed to fetch news : ${error}` }, { status: 500 });  
     }  
 }  
 
@@ -42,6 +44,6 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ message: "Created successfully", id: add.rows[0].id });  
     } catch (error) {  
-        return NextResponse.json({ error: "Failed to create new news" }, { status: 500 });  
+        return NextResponse.json({ error: `Failed to create new news : ${error}` }, { status: 500 });  
     }  
 }
