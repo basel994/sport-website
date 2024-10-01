@@ -1,7 +1,5 @@
 import { sql } from "@vercel/postgres";  
-import { NextRequest, NextResponse } from "next/server";  
-import fs from "fs";  
-import path from "path";  
+import { NextRequest, NextResponse } from "next/server";   
 
 export async function GET(request: NextRequest) {
     const contentType = request.headers;
@@ -16,28 +14,17 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {  
     try {  
-        const uploadsDir = path.join(process.cwd(), "public/images/home/news/uploads");  
-        if (!fs.existsSync(uploadsDir)) {
-            fs.mkdirSync(uploadsDir, { recursive: true });  
-        }  
         const requestBody = await request.json();  
-        const { title, content, image } = requestBody;  
+        const { title, content} = requestBody;  
 
         // تأكد من أن جميع الحقول موجودة  
-        if (!title || !content || !image) {  
+        if (!title || !content) {  
             return NextResponse.json({ error: "Title, content, and image are required." }, { status: 400 });  
         }  
 
-        const filename = `${Date.now()}-${image.name}`;  
-        const filepath = path.join(uploadsDir, filename);  
-        const buffer = Buffer.from(await image.arrayBuffer());  
-
-        fs.writeFileSync(filepath, buffer);  
-        const storedPath = `/images/home/news/uploads/${filename}`;  
-
         const add = await sql`  
-            INSERT INTO news (title, content, image)   
-            VALUES (${title}, ${content}, ${storedPath})   
+            INSERT INTO news (title, content)   
+            VALUES (${title}, ${content})   
             RETURNING id`;  
 
         return NextResponse.json({ message: "Created successfully", id: add.rows[0].id });  
