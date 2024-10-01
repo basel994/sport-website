@@ -1,31 +1,47 @@
-import { sql } from "@vercel/postgres";
-import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { sql } from "@vercel/postgres";  
+import { NextRequest, NextResponse } from "next/server";  
+import fs from "fs";  
+import path from "path";  
 
-export async function GET(request: NextRequest) {
-    const headers = new Headers(request.headers);
-    headers.get("Content-Type");
-    const result = await sql `
-    SELECT * FROM news
-    `;
-    const rows = result.rows;
-    return new Response(JSON.stringify(rows));
-}
-export async function POST(request: NextRequest) {
-    const uploadsDir = "public/images/home/news/uploads";
-    const requestBody = await request.json();
-    const title: string = requestBody.title;
-    const content: string = requestBody.content;
-    const image: File = requestBody.image;
-    const blobImage = image as Blob;
-    const filename = `${Date.now()}-${image.name}`;
-    const filepath = path.join(uploadsDir, filename);
-    const buffer = Buffer.from(await blobImage.arrayBuffer());
-    fs.writeFileSync(filepath, buffer); 
-    const storedPath = `/images/home/news/uploads/${filename}`
-    const add = await sql `
-    INSERT INTO news (title, content, image) VALUES (${title}, ${content}, ${storedPath}) RETURNING id
-    `;
-    return new NextResponse(JSON.stringify({message: "created successfully", id: add.rows[0].id}));
+const uploadsDir = path.join(process.cwd(), "public/images/home/news/uploads");  
+
+if (!fs.existsSync(uploadsDir)) {  
+    fs.mkdirSync(uploadsDir, { recursive: true });  
+}  
+
+export async function GET(request: NextRequest) {  
+    try {  
+        const result = await sql`SELECT * FROM news`;  
+        return NextResponse.json(result.rows);  
+    } catch (error) {  
+        return NextResponse.json({ error: "Failed to fetch news" }, { status: 500 });  
+    }  
+}  
+
+export async function POST(request: NextRequest) {  
+    try {  
+        const requestBody = await request.json();  
+        const { title, content, image } = requestBody;  
+
+        // تأكد من أن جميع الحقول موجودة  
+        if (!title || !content || !image) {  
+            return NextResponse.json({ error: "Title, content, and image are required." }, { status: 400 });  
+        }  
+
+        const filename = `${Date.now()}-${image.name}`;  
+        const filepath = path.join(uploadsDir, filename);  
+        const buffer = Buffer.from(await image.arrayBuffer());  
+
+        fs.writeFileSync(filepath, buffer);  
+        const storedPath = `/images/home/news/uploads/${filename}`;  
+
+        const add = await sql`  
+            INSERT INTO news (title, content, image)   
+            VALUES (${title}, ${content}, ${storedPath})   
+            RETURNING id`;  
+
+        return NextResponse.json({ message: "Created successfully", id: add.rows[0].id });  
+    } catch (error) {  
+        return NextResponse.json({ error: "Failed to create new news" }, { status: 500 });  
+    }  
 }
