@@ -18,7 +18,7 @@ export default function NewForm() {
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-        await fetch(`${baseUrl}api/news`, {
+        await fetch(`${baseUrl}/api/news`, {
             method: "POST",
             body: JSON.stringify({title, content, image}),
         });
