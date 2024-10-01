@@ -1,0 +1,6 @@
+.badge {
+    background-color: rgb(8, 8, 36);
+    color: rgb(255, 255, 255);
+    border-radius: 50%;
+    padding: 0.5rem;
+}

@@ -1,16 +1,15 @@
+import PanelCard from "@/components/PanelCard/PanelCard";
+import { newsFetch } from "@/dataFetching/newsFetch";
 import Link from "next/link";
-import styles from "./../dashboard.module.css";
-import { newsFetch } from "@/dataFetching/newsFetch"
+import Badge from "@/components/Badge/Badge";
 
 export default async function NewsSlot() {
     const newsFetched = await newsFetch();
     const newsLength = newsFetched.length;
     return(
-        <div className={styles.newsContainer}>
-            <h1>News count: {newsLength}</h1>
-            <div>
+        <PanelCard props={{title: "News"}}>
+            <h3>News count: <Badge title={newsLength} /></h3>
                 <Link href="/dashboard/add_new">add new</Link>
-            </div>
-        </div>
+        </PanelCard>
     )
 }

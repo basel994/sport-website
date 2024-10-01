@@ -1,0 +1,70 @@
+.inputContainer {  
+    position: relative;  
+    margin: 20px 0;  
+}  
+
+.inputElement {  
+    border: none;  
+    border-bottom: 1px solid #4283af; 
+    padding: 10px 0;  
+    width: 100%;  
+    font-size: 16px;
+    color: #008528; 
+}  
+
+.labelElement {  
+    position: absolute;  
+    top: 0;  
+    left: 0;  
+    pointer-events: none; 
+    color: #95b5e6;  
+    transition: 0.2s ease all;
+}  
+
+.inputElement:focus + label,  
+.inputElement:not(:placeholder-shown) + label {  
+    top: -20px;  
+    left: 0;  
+    font-size: 12px; 
+    color: #263fca; 
+}  
+
+.inputElement:focus {  
+    outline: none; 
+} 
+
+
+.fileInput {  
+    display: none;
+}  
+
+.fileInputLabel {  
+    cursor: pointer;  
+    display: inline-block; 
+    font-size: 1.1rem;
+}  
+
+.customIcon {  
+    display: inline-block;
+    font-size: 1remrem;
+    transition: transform 0.2s; 
+}  
+
+.fileInputLabel:hover .customIcon {  
+    transform: scale(1.1);  
+} 
+
+.submit {
+    border: none;
+    border-radius: 0.5rem;
+    background-color: rgb(30, 121, 75);
+    color: #ffffff;
+    padding: 0.5rem;
+    transition: transform 0.5s linear;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+.submit:hover {
+    transform: translateY(-0.2rem);
+}
