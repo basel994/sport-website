@@ -13,10 +13,7 @@ export async function GET(request: NextRequest) {
     return new Response(JSON.stringify(rows));
 }
 export async function POST(request: NextRequest) {
-    const uploadsDir = path.join(process.cwd(), 'public', 'images', 'home', 'news', 'uploads');  
-    if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
-    }
+    const uploadsDir = "public/images/home/news/uploads";
     const requestBody = await request.json();
     const title: string = requestBody.title;
     const content: string = requestBody.content;
