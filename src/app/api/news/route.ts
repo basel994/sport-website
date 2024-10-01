@@ -18,19 +18,14 @@ export async function POST(request: NextRequest) {
     const title: string = requestBody.title;
     const content: string = requestBody.content;
     const image: File = requestBody.image;
-    if(title && content && image){
-        const blobImage = image as Blob;
-        const filename = `${Date.now()}-${image.name}`;
-        const filepath = path.join(uploadsDir, filename);
-        const buffer = Buffer.from(await blobImage.arrayBuffer());
-        fs.writeFileSync(filepath, buffer); 
-        const storedPath = `/images/home/news/uploads/${filename}`
-        const add = await sql `
-        INSERT INTO news (title, content, image) VALUES (${title}, ${content}, ${storedPath}) RETURNING id
-        `;
-        return new NextResponse(JSON.stringify({message: "created successfully", id: add.rows[0].id}));
-    }
-    else {
-        return new NextResponse(JSON.stringify({message: "error"}));
-    }
+    const blobImage = image as Blob;
+    const filename = `${Date.now()}-${image.name}`;
+    const filepath = path.join(uploadsDir, filename);
+    const buffer = Buffer.from(await blobImage.arrayBuffer());
+    fs.writeFileSync(filepath, buffer); 
+    const storedPath = `/images/home/news/uploads/${filename}`
+    const add = await sql `
+    INSERT INTO news (title, content, image) VALUES (${title}, ${content}, ${storedPath}) RETURNING id
+    `;
+    return new NextResponse(JSON.stringify({message: "created successfully", id: add.rows[0].id}));
 }
