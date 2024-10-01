@@ -17,7 +17,10 @@ export async function POST(request: NextRequest) {
     if (!fs.existsSync(uploadsDir)) {
         fs.mkdirSync(uploadsDir, { recursive: true });
     }
-    const {title, content, image}:{title: string, content: string, image: File} = await request.json();
+    const requestBody = await request.json();
+    const title: string = requestBody.title;
+    const content: string = requestBody.content;
+    const image: File = requestBody.image;
     if(title && content && image){
         const blobImage = image as Blob;
         const filename = `${Date.now()}-${image.name}`;
