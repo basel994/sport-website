@@ -3,12 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";  
 import path from "path";  
 
-const uploadsDir = path.join(process.cwd(), "public/images/home/news/uploads");  
-
-if (!fs.existsSync(uploadsDir)) {  
-    fs.mkdirSync(uploadsDir, { recursive: true });  
-}  
-
 export async function GET(request: NextRequest) {
     const contentType = request.headers;
     contentType.get("Content-Type");
@@ -22,6 +16,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {  
     try {  
+        const uploadsDir = path.join(process.cwd(), "public/images/home/news/uploads");  
+        if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });  
+        }  
         const requestBody = await request.json();  
         const { title, content, image } = requestBody;  
 
