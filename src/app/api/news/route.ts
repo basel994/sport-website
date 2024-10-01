@@ -3,10 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-const uploadsDir = path.join(process.cwd(), 'public', 'images', 'home', 'news', 'uploads');  
-if (!fs.existsSync(uploadsDir)) {  
-    fs.mkdirSync(uploadsDir, { recursive: true }); // إنشاء المجلد إذا لم يكن موجودًا  
-}
 export async function GET(request: NextRequest) {
     const headers = new Headers(request.headers);
     headers.get("Content-Type");
@@ -17,6 +13,10 @@ export async function GET(request: NextRequest) {
     return new Response(JSON.stringify(rows));
 }
 export async function POST(request: NextRequest) {
+    const uploadsDir = path.join(process.cwd(), 'public', 'images', 'home', 'news', 'uploads');  
+    if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+    }
     const {title, content, image}:{title: string, content: string, image: File} = await request.json();
     if(title && content && image){
         const blobImage = image as Blob;
