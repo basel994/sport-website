@@ -15,8 +15,18 @@ export default function NewForm() {
             setImage(file);
         }
     }
+    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+        const response = await fetch(`${baseUrl}/api/news`, {
+            method: "POST",
+            body: JSON.stringify({title, content, image}),
+        });
+        const result = await response.json();
+        console.log(result);
+    }
     return(
-        <form className={styles.newForm}>
+        <form className={styles.newForm} onSubmit={handleSubmit}>
             <TextInput props={{value: title, change: setTitle, placeHolder: "Title"}} />
             <TextInput props={{value: content, change: setContent, placeHolder: "Content"}} />
             <FileInput onchange={handleFile} />
