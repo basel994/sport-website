@@ -22,7 +22,6 @@ export default function NewForm() {
             method: "POST",
             body: JSON.stringify({title, content, image}),
         });
-        const result = await response.json();
     }
     return(
         <form className={styles.newForm} onSubmit={handleSubmit}>
