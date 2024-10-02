@@ -11,6 +11,7 @@ export default function NewForm() {
     const [content, setContent] = useState("");
     const [image, setImage] = useState<File>();
     const [loading, setLoading] = useState<boolean>(false);
+    const [apiMessage, setaPIMessage] = useState<string>("");
     const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if(file) {
@@ -31,8 +32,8 @@ export default function NewForm() {
             method: "POST",
             body: formData,
         });
-        const apiResponse = await callApi.json();
-        console.log(apiResponse);
+        const {message}: {message: string} = await callApi.json();
+        setaPIMessage(message)
         setLoading(false);
     }
     return(
@@ -41,9 +42,7 @@ export default function NewForm() {
             <TextInput props={{value: content, change: setContent, placeHolder: "Content"}} />
             <FileInput onchange={handleFile} />
             <SubmitButton title={loading?<Spinner />:"Save"} />
-            <h3>{title}</h3>
-            <h5>{content}</h5>
-            <h5>{image?.name}</h5>
+            <h3>{apiMessage}</h3>
         </form>
     )
 }

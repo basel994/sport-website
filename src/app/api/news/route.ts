@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     const imageFile = formData.get('image') as File;  
   
     if (!title || !content || !imageFile) {  
-      return NextResponse.json({ error: 'جميع الحقول مطلوبة' }, { status: 400 });  
+      return NextResponse.json({ message: 'جميع الحقول مطلوبة' }, { status: 400 });  
     }  
   
     try {  
@@ -58,11 +58,10 @@ export async function POST(request: NextRequest) {
         VALUES (${title}, ${content}, ${uploadResult.secure_url})  
         RETURNING id;  
       `;  
-  
       return NextResponse.json({ id: res.rows[0].id, message: 'تم إنشاء الخبر بنجاح' }, { status: 201 });  
       
     } catch (error) {  
       console.error(error);  
-      return NextResponse.json({ error: 'فشل في إنشاء الخبر' }, { status: 500 });  
+      return NextResponse.json({ message: 'فشل في إنشاء الخبر' }, { status: 500 });  
     } 
 }
