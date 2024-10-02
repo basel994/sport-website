@@ -16,41 +16,40 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(result.rows);  
 }  
 
-export async function POST(request: NextRequest) {  
-    const requestBody = await request.json();  
-    const { title, content, image } = requestBody;  
-
-    // تأكد من أن جميع الحقول موجودة  
-    if (!title || !content || !image) {  
-        return NextResponse.json({ error: "Title, content, and image are required." }, { status: 400 });  
-    }  
-
-    const buffer = Buffer.from(await image.arrayBuffer());  
-
-    try {  
+export async function POST(request: NextRequest) {
+    const formData = await request.formData();  
+    const title = formData.get('title') as string;  
+    const content = formData.get('content') as string;  
+    const imageFile = formData.get('image') as File; 
+    try{
+        const arrayBuffer = await imageFile.arrayBuffer();  
+        const buffer = Buffer.from(arrayBuffer);  
+    
         // رفع الصورة إلى Cloudinary  
-        const response = cloudinary.v2.uploader.upload_stream(  
-            { resource_type: 'image' },  
-            async (error, result) => {  
-                if (error) {  
-                    return NextResponse.json({ error: "Failed to upload image" }, { status: 500 });  
-                }  
-
-                // تخزين المسار في قاعدة البيانات  
-                const add = await sql`  
-                    INSERT INTO news (title, content, image)   
-                    VALUES (${title}, ${content}, ${result?.secure_url})   
-                    RETURNING id`;  
-
-                return NextResponse.json({ message: "Created successfully", id: add.rows[0].id });  
-            }  
-        );  
-
-        // بدء الدفق لرفع الصورة  
-        const writeStream = response;  
-        writeStream.end(buffer);  
-
-    } catch (error) {  
-        return NextResponse.json({ error: `Failed to create new news : ${error}` }, { status: 500 });  
-    }  
+        const uploadResult = cloudinary.v2.uploader.upload_stream({   
+          resource_type: 'auto',   
+          buffer   
+        });
+        return new Promise((resolve, reject) => {  
+            uploadResult.on('end', async (result: any) => {  
+              // تخزين البيانات في Vercel Postgres  
+              const res = await sql`  
+                INSERT INTO news(title, content, image)   
+                VALUES (${title}, ${content}, ${result.secure_url})  
+                RETURNING id;  
+              `;  
+              
+              resolve(NextResponse.json({ id: res.rows[0].id, message: 'تم إنشاء الخبر بنجاح' }, { status: 201 }));  
+            });  
+      
+            uploadResult.on('error', (error: any) => {  
+              console.error(error);  
+              reject(NextResponse.json({ error: 'فشل في رفع الصورة' }, { status: 500 }));  
+            });  
+      
+            uploadResult.end(buffer);  
+          });
+    } catch(error) {
+        return NextResponse.json({ error: `error with add new : ${error}` }, { status: 500 }); 
+    }
 }
